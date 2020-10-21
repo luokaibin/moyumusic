@@ -1,0 +1,38 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "target": "es2017",
+    "lib": [
+      "es2020"
+    ],
+    "module": "commonjs",
+    "strict": true, // 启用所有严格类型检查选项。https://www.tslang.cn/docs/handbook/compiler-options.html
+    "noImplicitAny": false, // 在表达式和声明上有隐含的 any类型时报错。
+    "experimentalDecorators": true, // 启用实验性的ES装饰器。
+    "emitDecoratorMetadata": true, // 给源码里的装饰器声明加上设计类型元数据。
+    "charset": "utf8",
+    "allowJs": true, // 允许编译javascript文件。
+    "pretty": true,
+    "noEmitOnError": false,
+    "noUnusedLocals": false, // 若有未使用的局部变量则抛错。
+    "noUnusedParameters": true, // 给错误和消息设置样式，使用颜色和上下文。
+    "allowUnreachableCode": false, // 不报告执行不到的代码错误。
+    "allowUnusedLabels": false, // 不报告未使用的标签错误。
+    "strictPropertyInitialization": false, // 确保类的非undefined属性已经在构造函数里初始化。若要令此选项生效，需要同时启用--strictNullChecks。
+    "noFallthroughCasesInSwitch": true, // 报告switch语句的fallthrough错误。（即，不允许switch的case语句贯穿）
+    "skipLibCheck": true, // 忽略所有的声明文件（ *.d.ts）的类型检查。
+    "skipDefaultLibCheck": true, // 忽略 库的默认声明文件的类型检查。
+    "inlineSourceMap": true, // 生成单个sourcemaps文件，而不是将每sourcemaps生成不同的文件。
+    "importHelpers": true, // 从 tslib 导入辅助工具函数（比如 __extends， __rest等）
+    "baseUrl": ".",
+    "paths": {
+      "@types": ["./app/types/types.ts"],
+      "@const": ["./app/constants/index.ts"]
+    }
+  },
+  "exclude": [
+    "app/public",
+    "app/views",
+    "node_modules*"
+  ]
+}
