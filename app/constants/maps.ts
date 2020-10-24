@@ -59,6 +59,15 @@ export const SearchMIType: ISearchType<IType> = {
   MV: 5
 };
 
+export const SearchXIAType: ISearchType<IType> = {
+  SONG: 'SONG',
+  SONGLIST: 'SONGLIST',
+  LYRIC: 'LYRIC',
+  ALBUM: 'ALBUM',
+  SINGER: 'SINGER',
+  MV: 'MV'
+};
+
 /**
  * 搜索类型
  */
@@ -67,7 +76,7 @@ export const SearchType: ISearchType = {
   SONG: {
     QQ: SearchQQType.SONG,
     NETEASE: SearchNETEASEType.SONG,
-    XIA: 1, // 还未修改
+    XIA: SearchXIAType.SONG, // 还未修改
     MI: SearchMIType.SONG,
     KU: 1, // 还未修改
     SI: 1 // 还未修改
@@ -76,7 +85,7 @@ export const SearchType: ISearchType = {
   SONGLIST: {
     QQ: SearchQQType.SONGLIST,
     NETEASE: SearchNETEASEType.SONGLIST,
-    XIA: 1, // 还未修改
+    XIA: SearchXIAType.LYRIC, // 还未修改
     MI: SearchMIType.SONGLIST,
     KU: 1, // 还未修改
     SI: 1 // 还未修改
@@ -85,7 +94,7 @@ export const SearchType: ISearchType = {
   LYRIC: {
     QQ: SearchQQType.LYRIC,
     NETEASE: SearchNETEASEType.LYRIC,
-    XIA: 1, // 还未修改
+    XIA: SearchXIAType.LYRIC, // 还未修改
     MI: SearchMIType.LYRIC,
     KU: 1, // 还未修改
     SI: 1 // 还未修改
@@ -94,7 +103,7 @@ export const SearchType: ISearchType = {
   ALBUM: {
     QQ: SearchQQType.ALBUM,
     NETEASE: SearchNETEASEType.ALBUM,
-    XIA: 1, // 还未修改
+    XIA: SearchXIAType.ALBUM, // 还未修改
     MI: SearchMIType.ALBUM,
     KU: 1, // 还未修改
     SI: 1 // 还未修改
@@ -103,7 +112,7 @@ export const SearchType: ISearchType = {
   SINGER: {
     QQ: SearchQQType.SINGER,
     NETEASE: SearchNETEASEType.SINGER,
-    XIA: 1, // 还未修改
+    XIA: SearchXIAType.SINGER, // 还未修改
     MI: SearchMIType.SINGER,
     KU: 1, // 还未修改
     SI: 1 // 还未修改
@@ -112,8 +121,8 @@ export const SearchType: ISearchType = {
   MV: {
     QQ: SearchQQType.MV,
     NETEASE: SearchNETEASEType.MV,
-    XIA: 1, // 还未修改
-    MI: SearchNETEASEType.SINGER,
+    XIA: SearchXIAType.MV, // 还未修改
+    MI: SearchMIType.MV,
     KU: 1, // 还未修改
     SI: 1 // 还未修改
   }
@@ -121,7 +130,7 @@ export const SearchType: ISearchType = {
 
 /**
  * QQ音乐搜索接口
- * 0：单曲，2：歌单，7：歌词，8：专辑，9：歌手，12：mv
+ * SONG：单曲，SONGLIST：歌单，LYRIC：歌词，ALBUM：专辑，SINGER：歌手，MV：mv
  */
 export const URLQQMAP = {
   [SearchQQType.SONG]: 'https://c.y.qq.com/soso/fcgi-bin/search_for_qq_cp',
@@ -130,6 +139,19 @@ export const URLQQMAP = {
   [SearchQQType.ALBUM]: 'http://c.y.qq.com/soso/fcgi-bin/client_search_cp',
   [SearchQQType.SINGER]: 'http://c.y.qq.com/soso/fcgi-bin/client_search_cp',
   [SearchQQType.MV]: 'http://c.y.qq.com/soso/fcgi-bin/client_search_cp'
+};
+
+/**
+ * 虾米音乐搜索接口
+ * SONG：单曲，SONGLIST：歌单，ALBUM：专辑，SINGER：歌手，MV：mv
+ */
+export const XIADomain = 'https://www.xiami.com';
+export const URLXIAMAP = {
+  [SearchXIAType.SONG]: `${XIADomain}/api/search/searchSongs`,
+  [SearchXIAType.SONGLIST]: `${XIADomain}/api/search/searchCollects`,
+  [SearchXIAType.ALBUM]: `${XIADomain}/api/search/searchAlbums`,
+  [SearchXIAType.SINGER]: `${XIADomain}/api/search/searchArtists`,
+  [SearchXIAType.MV]: `${XIADomain}/api/search/searchMvs`
 };
 /**
  * 拼接播放的URL

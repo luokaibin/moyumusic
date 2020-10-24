@@ -1,6 +1,14 @@
 import { Service } from 'egg';
 import { ISearchServiceParams, SearchQQReq, SearchNETEASEReq, SearchMIReq } from '@types';
-import { URLQQMAP, ChannelNameMap, SearchQQType, SearchNETEASEType, SearchMIType } from '@const';
+import {
+  URLQQMAP,
+  ChannelNameMap,
+  SearchQQType,
+  SearchNETEASEType,
+  SearchMIType,
+  URLXIAMAP,
+  SearchXIAType
+} from '@const';
 
 export default class Search extends Service {
   private CreateSearchQQReq({ KeyWord, Limit, PageIndex, Type }: ISearchServiceParams): SearchQQReq {
@@ -12,7 +20,9 @@ export default class Search extends Service {
     const { app, CreateSearchQQReq } = this;
     try {
       const data: SearchQQReq = CreateSearchQQReq(params);
-      const { data: res } = await app.RequestQQ<SearchQQReq, { code: number; [key: string]: any }>({
+      const {
+        body: { data: res }
+      } = await app.RequestQQ<SearchQQReq>({
         url: URLQQMAP[params.Type],
         data
       });
@@ -44,7 +54,7 @@ export default class Search extends Service {
         limit: Limit,
         offset: (PageIndex - 1) * Limit
       };
-      const res = await app.RequestNETEASE<SearchNETEASEReq, { [key: string]: any }>({
+      const { body: res } = await app.RequestNETEASE<SearchNETEASEReq>({
         url: 'https://music.163.com/weapi/search/get',
         data: req
       });
@@ -76,13 +86,12 @@ export default class Search extends Service {
         rows: Limit,
         type: Type
       };
-      const res = await app.RequestMI<SearchMIReq, { [key: string]: any }>({
+      const { body: res } = await app.RequestMI<SearchMIReq>({
         url: 'https://m.music.migu.cn/migu/remoting/scr_search_tag',
         data
       });
       if (Type === SearchMIType.SONG) {
         const { musics: list, pgt: total } = res;
-        this.logger.info(list);
         return {
           total,
           list: list?.map((item) => ({
@@ -100,10 +109,45 @@ export default class Search extends Service {
       return Promise.reject(error);
     }
   }
-  public async [`Search${ChannelNameMap.KU}`](query: ISearchServiceParams) {
-    return query;
+  public async [`Search${ChannelNameMap.XIA}`]({ KeyWord, Limit, PageIndex, Type }: ISearchServiceParams) {
+    const { app } = this;
+    try {
+      const data = {
+        key: KeyWord,
+        pagingVO: {
+          page: PageIndex,
+          pageSize: Limit
+        }
+      };
+      const { body: res } = await app.RequestXIA({
+        url: URLXIAMAP[Type],
+        data: JSON.stringify(data)
+      });
+      if (Type === SearchXIAType.SONG) {
+        const {
+          result: {
+            data: {
+              pagingVO: { count: total },
+              songs: list
+            }
+          }
+        } = res;
+        return {
+          total,
+          list: list?.map((item) => ({
+            songmid: item.songId,
+            songname: item.songName,
+            albumname: item.albumName,
+            singer: item?.singerVOs?.map((s) => ({ id: s.artistId, name: s.artistName }))
+          }))
+        };
+      }
+      return res;
+    } catch (error) {
+      return Promise.reject(error);
+    }
   }
-  public async [`Search${ChannelNameMap.XIA}`](query: ISearchServiceParams) {
+  public async [`Search${ChannelNameMap.KU}`](query: ISearchServiceParams) {
     return query;
   }
   public async [`Search${ChannelNameMap.SI}`](query: ISearchServiceParams) {

@@ -88,6 +88,10 @@ export interface IRequestQQOptions<T> {
   /** 请求方式 */
 }
 
+export interface IAppRequestRes<B, C> {
+  body?: B;
+  cookie?: C;
+}
 export interface IRequestNETEASEOptions<T> extends IRequestQQOptions<T> {
   /** 加密方式 */
   crypto?: 'Weapi' | 'Eapi';
@@ -114,7 +118,7 @@ export interface IMkdir {
 }
 
 export interface ICookie {
-  uin: string;
+  [key: string]: any;
 }
 
 export interface IBody<T = any> {

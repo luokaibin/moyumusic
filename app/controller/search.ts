@@ -21,7 +21,6 @@ export default class SearchController extends Controller {
     const { ctx } = this;
     try {
       const { query, service } = ctx;
-      console.log(query);
       const { Channel = ChannelNameMap.QQ, KeyWord, Limit = 20, PageIndex = 1, Type = 'SONG' } = <ISearchReq>query;
       await this.checkReq({ Channel, KeyWord, Limit, PageIndex, Type });
       const res = await service.search[`Search${ChannelNameMap[Channel]}`]({

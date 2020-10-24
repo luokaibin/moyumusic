@@ -24,7 +24,9 @@ export default class UserController extends Controller {
         const arr = c.split('=');
         userCookie[arr[0]] = arr[1];
       });
-      app.helper.writeFileToData(app.COOKIEFILE, JSON.stringify(userCookie), app.DATAPATH);
+      const cookie = await app.helper.getCookie(app.COOKIEFILE, app.DATAPATH);
+      cookie.QQ = userCookie;
+      app.helper.writeFileToData(app.COOKIEFILE, JSON.stringify(cookie, null, 2), app.DATAPATH);
       ctx.body = {
         code: SUCCESS,
         message: '成功'

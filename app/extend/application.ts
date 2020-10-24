@@ -6,7 +6,8 @@ import {
   ICookie,
   IRequestNETEASEOptions,
   ICryptoApi,
-  IRequestMIOptions
+  IRequestMIOptions,
+  IAppRequestRes
 } from '@types';
 import { mkdir, readFile, stat, writeFile } from 'fs';
 import { resolve } from 'path';
@@ -233,22 +234,60 @@ export default {
       });
     },
     /** 获取cookie */
-    async getCookie<T extends ICookie>(COOKIEFILE: string, DATAPATH: string): Promise<T | undefined> {
+    async getCookie(COOKIEFILE: string, DATAPATH: string): Promise<ICookie> {
       try {
         const cookie = await this.getFileContent(COOKIEFILE, DATAPATH);
         return JSON.parse(cookie);
       } catch (error) {
-        return undefined;
+        return {};
+      }
+    },
+    /** 解析后端接口返回的cookie */
+    parseResCookie(cookies: string[]) {
+      const cookie = {};
+      cookies.forEach((item) => {
+        const itemStr = item.replace(/\s/g, '');
+        const [cookieStr] = itemStr.split(';');
+        const [key, value] = cookieStr.split('=');
+        cookie[key] = value;
+      });
+      return cookie;
+    },
+    /** md5 加密 */
+    md5(str: string): string {
+      const md5 = createHash('md5');
+      md5.update(str);
+      return md5.digest('hex');
+    },
+    /**
+     * 虾米 md5 加密
+     * @param xm_sg_tk 虾米返回的 cookie 中的
+     * @param api 请求的api
+     * @param req 请求的参数 json 字符串
+     */
+    md5XIA(xm_sg_tk: string, api = '', req = '') {
+      const [tk] = xm_sg_tk.split('_');
+      return api && this.md5(`${tk}_xmMain_${api}_${req}`);
+    },
+    /**
+     * 将 json 字符串转为 obj
+     * @param json json 字符串
+     */
+    parseJson(json: string) {
+      try {
+        return JSON.parse(json);
+      } catch (error) {
+        return {};
       }
     }
   },
 
-  async RequestQQ<T extends any, P extends any>(options: IRequestQQOptions<T>): Promise<P> {
+  async RequestQQ<T = any>(options: IRequestQQOptions<T>): Promise<IAppRequestRes<any, any>> {
     try {
       const { httpclient, helper, COOKIEFILE, DATAPATH } = this as Application;
       const { url, data } = options;
-      const cookie = await helper.getCookie(COOKIEFILE, DATAPATH);
-      const { data: result } = await httpclient.request(url, {
+      const { QQ: cookie } = await helper.getCookie(COOKIEFILE, DATAPATH);
+      const { data: result, headers } = await httpclient.request(url, {
         method: 'GET',
         data,
         // 设置响应数据格式，默认不对响应数据做任何处理，直接返回原始的 buffer 格式数据。 支持 text 和 json 两种格式
@@ -258,12 +297,15 @@ export default {
           Cookie: helper._formatCookie(cookie)
         }
       });
-      return JSON.parse(result.replace(/callback\(|MusicJsonCallback\(|jsonCallback\(|\)$/g, ''));
+      return {
+        cookie: helper.parseResCookie((headers['set-cookie'] as string[]) ?? []),
+        body: JSON.parse(result.replace(/callback\(|MusicJsonCallback\(|jsonCallback\(|\)$/g, ''))
+      };
     } catch (error) {
       throw new Error(error);
     }
   },
-  async RequestNETEASE<T extends any, P extends any>(options: IRequestNETEASEOptions<T>): Promise<P> {
+  async RequestNETEASE<T extends any>(options: IRequestNETEASEOptions<T>): Promise<IAppRequestRes<any, any>> {
     try {
       const {
         httpclient,
@@ -274,7 +316,7 @@ export default {
       } = this as Application;
       const { url, data, crypto = 'Weapi', path } = options;
       const cryptoData = helper[`_crypto${crypto}`]({ data, NETEASECONF, url, path });
-      const { data: result } = await httpclient.request(url, {
+      const { data: result, headers } = await httpclient.request(url, {
         method: 'POST',
         data: helper.stringify(cryptoData.data),
         // 设置响应数据格式，默认不对响应数据做任何处理，直接返回原始的 buffer 格式数据。 支持 text 和 json 两种格式
@@ -286,16 +328,19 @@ export default {
           Cookie: helper._formatCookie(cryptoData.cookie)
         }
       });
-      return JSON.parse(result);
+      return {
+        body: JSON.parse(result),
+        cookie: helper.parseResCookie((headers['set-cookie'] as string[]) ?? [])
+      };
     } catch (error) {
       throw new Error(error);
     }
   },
-  async RequestMI<T extends any, P extends any>(options: IRequestMIOptions<T>): Promise<P> {
+  async RequestMI<T extends any>(options: IRequestMIOptions<T>): Promise<IAppRequestRes<any, any>> {
     try {
       const { httpclient, helper } = this as Application;
       const { url, data, headers } = options;
-      const { data: result } = await httpclient.request(`${url}?${helper.stringify(data)}`, {
+      const { data: result, headers: resHeaders } = await httpclient.request(`${url}?${helper.stringify(data)}`, {
         method: 'GET',
         // 设置响应数据格式，默认不对响应数据做任何处理，直接返回原始的 buffer 格式数据。 支持 text 和 json 两种格式
         dataType: 'text',
@@ -303,7 +348,44 @@ export default {
           ...headers
         }
       });
-      return JSON.parse(result);
+      return {
+        body: JSON.parse(result),
+        cookie: helper.parseResCookie((resHeaders['set-cookie'] as string[]) ?? [])
+      };
+    } catch (error) {
+      throw new Error(error);
+    }
+  },
+  async RequestXIA(options: IRequestQQOptions<string>): Promise<IAppRequestRes<any, any>> {
+    try {
+      const {
+        httpclient,
+        helper,
+        COOKIEFILE,
+        DATAPATH,
+        config: {
+          CONSTANT: { XIADomain }
+        },
+        logger
+      } = this as Application;
+      const { XIA: cookie } = await helper.getCookie(COOKIEFILE, DATAPATH);
+      const { url, data } = options;
+      const _s = helper.md5XIA(cookie?.xm_sg_tk ?? '', url.replace(XIADomain, ''), data);
+      const { headers, data: res } = await httpclient.request(url, {
+        method: 'GET',
+        data: {
+          _q: data,
+          _s
+        },
+        dataType: 'text',
+        headers: {
+          cookie: helper._formatCookie(cookie)
+        }
+      });
+      return {
+        body: helper.parseJson(res),
+        cookie: helper.parseResCookie((headers['set-cookie'] as string[]) ?? [])
+      };
     } catch (error) {
       throw new Error(error);
     }
