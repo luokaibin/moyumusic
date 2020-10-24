@@ -1,18 +1,9 @@
-import { Application } from 'egg';
-import {
-  IRequestQQOptions,
-  IGetStat,
-  IMkdir,
-  ICookie,
-  IRequestNETEASEOptions,
-  ICryptoApi,
-  IRequestMIOptions,
-  IAppRequestRes
-} from '@types';
-import { mkdir, readFile, stat, writeFile } from 'fs';
-import { resolve } from 'path';
-import { createCipheriv, createHash, publicEncrypt, randomBytes } from 'crypto';
-import { RSA_NO_PADDING } from 'constants';
+import {Application} from 'egg';
+import {IRequestQQOptions, IGetStat, IMkdir, ICookie, IRequestNETEASEOptions, ICryptoApi, IRequestMIOptions, IAppRequestRes} from '@types';
+import {mkdir, readFile, stat, writeFile} from 'fs';
+import {resolve} from 'path';
+import {createCipheriv, createHash, publicEncrypt, randomBytes} from 'crypto';
+import {RSA_NO_PADDING} from 'constants';
 
 export default {
   get DATAPATH() {
@@ -58,20 +49,18 @@ export default {
      */
     _rsaEncrypt(buffer: Buffer, key: string): Buffer {
       buffer = Buffer.concat([Buffer.alloc(128 - buffer.length), buffer]);
-      return publicEncrypt({ key, padding: RSA_NO_PADDING }, buffer);
+      return publicEncrypt({key, padding: RSA_NO_PADDING}, buffer);
     },
     /**
      * 网易云参数加密用的
      * NETEASECONF 常量 NETEASECONF
      */
-    _weapi({ data, NETEASECONF }: ICryptoApi): { params: string; encSecKey: string } {
+    _weapi({data, NETEASECONF}: ICryptoApi): {params: string; encSecKey: string} {
       const text = JSON.stringify(data);
       const secretKey = randomBytes(16).map((n) => NETEASECONF.BASE62.charAt(n % 62).charCodeAt(0));
       return {
         params: this._aesEncrypt(
-          Buffer.from(
-            this._aesEncrypt(Buffer.from(text), 'cbc', NETEASECONF.PRESETKEY, NETEASECONF.IV).toString('base64')
-          ),
+          Buffer.from(this._aesEncrypt(Buffer.from(text), 'cbc', NETEASECONF.PRESETKEY, NETEASECONF.IV).toString('base64')),
           'cbc',
           secretKey,
           NETEASECONF.IV
@@ -82,7 +71,7 @@ export default {
     /**
      * 网易云参数加密用的
      */
-    _eapi({ url, data, NETEASECONF }: ICryptoApi) {
+    _eapi({url, data, NETEASECONF}: ICryptoApi) {
       const text = typeof data === 'object' ? JSON.stringify(data) : data;
       const message = `nobody${url}use${text}md5forencrypt`;
       const digest = createHash('md5').update(message).digest('hex');
@@ -119,12 +108,12 @@ export default {
      * 网易云 weapi 加密方式数据处理
      */
     _cryptoWeapi(params: ICryptoApi) {
-      return { data: this._weapi(params) };
+      return {data: this._weapi(params)};
     },
     /**
      * 网易云 eapi 加密方式数据处理
      */
-    _cryptoEapi({ data, NETEASECONF, path }: ICryptoApi) {
+    _cryptoEapi({data, NETEASECONF, path}: ICryptoApi) {
       const header = {
         appver: '6.1.1', // app 版本
         versioncode: '140', // 版本号
@@ -137,7 +126,7 @@ export default {
           .padStart(4, '0')}`
       };
       data.header = header;
-      return { data: this._eapi({ data, NETEASECONF, url: path, path }), cookie: header };
+      return {data: this._eapi({data, NETEASECONF, url: path, path}), cookie: header};
     },
     /**
      * querystring.stringify 方法，做参数格式化的
@@ -176,9 +165,9 @@ export default {
       return new Promise((resolve) => {
         stat(path, (err, stats) => {
           if (err) {
-            resolve({ status: false });
+            resolve({status: false});
           } else {
-            resolve({ status: true, stat: stats });
+            resolve({status: true, stat: stats});
           }
         });
       });
@@ -191,9 +180,9 @@ export default {
       return new Promise((resolve) => {
         mkdir(path, (err) => {
           if (!err) {
-            resolve({ status: true });
+            resolve({status: true});
           } else {
-            resolve({ status: false, message: err });
+            resolve({status: false, message: err});
           }
         });
       });
@@ -284,10 +273,10 @@ export default {
 
   async RequestQQ<T = any>(options: IRequestQQOptions<T>): Promise<IAppRequestRes<any, any>> {
     try {
-      const { httpclient, helper, COOKIEFILE, DATAPATH } = this as Application;
-      const { url, data } = options;
-      const { QQ: cookie } = await helper.getCookie(COOKIEFILE, DATAPATH);
-      const { data: result, headers } = await httpclient.request(url, {
+      const {httpclient, helper, COOKIEFILE, DATAPATH} = this as Application;
+      const {url, data} = options;
+      const {QQ: cookie} = await helper.getCookie(COOKIEFILE, DATAPATH);
+      const {data: result, headers} = await httpclient.request(url, {
         method: 'GET',
         data,
         // 设置响应数据格式，默认不对响应数据做任何处理，直接返回原始的 buffer 格式数据。 支持 text 和 json 两种格式
@@ -311,12 +300,12 @@ export default {
         httpclient,
         helper,
         config: {
-          CONSTANT: { NETEASECONF }
+          CONSTANT: {NETEASECONF}
         }
       } = this as Application;
-      const { url, data, crypto = 'Weapi', path } = options;
-      const cryptoData = helper[`_crypto${crypto}`]({ data, NETEASECONF, url, path });
-      const { data: result, headers } = await httpclient.request(url, {
+      const {url, data, crypto = 'Weapi', path} = options;
+      const cryptoData = helper[`_crypto${crypto}`]({data, NETEASECONF, url, path});
+      const {data: result, headers} = await httpclient.request(url, {
         method: 'POST',
         data: helper.stringify(cryptoData.data),
         // 设置响应数据格式，默认不对响应数据做任何处理，直接返回原始的 buffer 格式数据。 支持 text 和 json 两种格式
@@ -338,9 +327,9 @@ export default {
   },
   async RequestMI<T extends any>(options: IRequestMIOptions<T>): Promise<IAppRequestRes<any, any>> {
     try {
-      const { httpclient, helper } = this as Application;
-      const { url, data, headers } = options;
-      const { data: result, headers: resHeaders } = await httpclient.request(`${url}?${helper.stringify(data)}`, {
+      const {httpclient, helper} = this as Application;
+      const {url, data, headers} = options;
+      const {data: result, headers: resHeaders} = await httpclient.request(`${url}?${helper.stringify(data)}`, {
         method: 'GET',
         // 设置响应数据格式，默认不对响应数据做任何处理，直接返回原始的 buffer 格式数据。 支持 text 和 json 两种格式
         dataType: 'text',
@@ -364,14 +353,15 @@ export default {
         COOKIEFILE,
         DATAPATH,
         config: {
-          CONSTANT: { XIADomain }
-        },
-        logger
+          CONSTANT: {
+            Domains: {XIA: XIADomain}
+          }
+        }
       } = this as Application;
-      const { XIA: cookie } = await helper.getCookie(COOKIEFILE, DATAPATH);
-      const { url, data } = options;
+      const {XIA: cookie} = await helper.getCookie(COOKIEFILE, DATAPATH);
+      const {url, data} = options;
       const _s = helper.md5XIA(cookie?.xm_sg_tk ?? '', url.replace(XIADomain, ''), data);
-      const { headers, data: res } = await httpclient.request(url, {
+      const {headers, data: res} = await httpclient.request(url, {
         method: 'GET',
         data: {
           _q: data,
@@ -380,6 +370,36 @@ export default {
         dataType: 'text',
         headers: {
           cookie: helper._formatCookie(cookie)
+        }
+      });
+      return {
+        body: helper.parseJson(res),
+        cookie: helper.parseResCookie((headers['set-cookie'] as string[]) ?? [])
+      };
+    } catch (error) {
+      throw new Error(error);
+    }
+  },
+  async RequestKU(options: IRequestQQOptions<any>): Promise<IAppRequestRes<any, any>> {
+    try {
+      const {httpclient, helper, COOKIEFILE, DATAPATH, config} = this as Application;
+      const {
+        CONSTANT: {
+          Domains: {KU: KUDomain}
+        }
+      } = config;
+      const {KU: cookie} = await helper.getCookie(COOKIEFILE, DATAPATH);
+      const {url, data} = options;
+      const {headers, data: res} = await httpclient.request(url, {
+        method: 'GET',
+        data: {
+          ...data
+        },
+        dataType: 'text',
+        headers: {
+          cookie: helper._formatCookie(cookie),
+          Referer: KUDomain,
+          csrf: cookie?.kw_token
         }
       });
       return {

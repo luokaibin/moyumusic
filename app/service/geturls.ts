@@ -1,6 +1,6 @@
-import { Service } from 'egg';
-import { IGetUrlsServiceParams } from '@types';
-import { ChannelNameMap, PlayDomain, numberReg, MIToneFlag, XIADomain } from '@const';
+import {Service} from 'egg';
+import {IGetUrlsServiceParams} from '@types';
+import {ChannelNameMap, PlayDomain, numberReg, MIToneFlag, Domains} from '@const';
 
 export default class GetUrl extends Service {
   get URL(): {} {
@@ -12,20 +12,20 @@ export default class GetUrl extends Service {
       }
     };
   }
-  public async [`Geturls${ChannelNameMap.QQ}`]({ ids }: IGetUrlsServiceParams) {
-    const { app } = this;
+  public async [`Geturls${ChannelNameMap.QQ}`]({ids}: IGetUrlsServiceParams) {
+    const {app} = this;
     try {
-      const { QQ: cookie } = await app.helper.getCookie(app.COOKIEFILE, app.DATAPATH);
+      const {QQ: cookie} = await app.helper.getCookie(app.COOKIEFILE, app.DATAPATH);
       if (!cookie) return Promise.reject(new Error('获取播放链接前，请先设置cookie'));
-      const { uin } = cookie;
+      const {uin} = cookie;
       const songmid = ids.map((id) => `"${id}"`).join(',');
       const {
         body: {
           req_0: {
-            data: { midurlinfo }
+            data: {midurlinfo}
           }
         }
-      } = await app.RequestQQ({ url: this.URL[ChannelNameMap.QQ](uin, songmid) });
+      } = await app.RequestQQ({url: this.URL[ChannelNameMap.QQ](uin, songmid)});
       const result = {};
       midurlinfo.forEach((item) => {
         if (item.purl) {
@@ -37,7 +37,7 @@ export default class GetUrl extends Service {
       return Promise.reject(error);
     }
   }
-  public async [`Geturls${ChannelNameMap.NETEASE}`]({ ids }: IGetUrlsServiceParams) {
+  public async [`Geturls${ChannelNameMap.NETEASE}`]({ids}: IGetUrlsServiceParams) {
     try {
       if (!ids.every((id) => numberReg.test(id))) {
         return Promise.reject(new Error('id不合法'));
@@ -47,8 +47,8 @@ export default class GetUrl extends Service {
         br: 128000
       };
       const {
-        body: { data: result }
-      } = await this.app.RequestNETEASE<{ ids: string; br: number }>({
+        body: {data: result}
+      } = await this.app.RequestNETEASE<{ids: string; br: number}>({
         url: this.URL[ChannelNameMap.NETEASE](),
         data,
         crypto: 'Eapi',
@@ -63,8 +63,8 @@ export default class GetUrl extends Service {
       return Promise.reject(error);
     }
   }
-  public async [`Geturls${ChannelNameMap.MI}`]({ ids }: IGetUrlsServiceParams) {
-    const { app } = this;
+  public async [`Geturls${ChannelNameMap.MI}`]({ids}: IGetUrlsServiceParams) {
+    const {app} = this;
     try {
       const res = await Promise.allSettled(
         ids.map(async (id) => {
@@ -87,12 +87,12 @@ export default class GetUrl extends Service {
       );
       const urlMap = {};
       res.forEach((item) => {
-        const { value } = { value: {}, ...item };
+        const {value} = {value: {}, ...item};
         const {
           body: {
-            data: { songItem, url }
+            data: {songItem, url}
           }
-        } = <{ body: any }>value;
+        } = <{body: any}>value;
         urlMap[songItem?.songId] = url;
       });
       this.logger.info(urlMap);
@@ -101,25 +101,25 @@ export default class GetUrl extends Service {
       return Promise.reject(error);
     }
   }
-  public async [`Geturls${ChannelNameMap.XIA}`]({ ids }: IGetUrlsServiceParams) {
-    const { app } = this;
+  public async [`Geturls${ChannelNameMap.XIA}`]({ids}: IGetUrlsServiceParams) {
+    const {app} = this;
     try {
-      const data = { songIds: ids };
+      const data = {songIds: ids};
       const {
         body: {
           result: {
-            data: { songPlayInfos }
+            data: {songPlayInfos}
           }
         }
       } = await app.RequestXIA({
-        url: `${XIADomain}/api/song/getPlayInfo`,
+        url: `${Domains.XIA}/api/song/getPlayInfo`,
         data: JSON.stringify(data)
       });
       const urlMap = {};
       songPlayInfos.forEach((song) => {
         const {
           songId,
-          playInfos: [{ listenFile = '' }]
+          playInfos: [{listenFile = ''}]
         } = song;
         urlMap[songId] = listenFile;
       });
@@ -128,8 +128,34 @@ export default class GetUrl extends Service {
       return Promise.reject(error);
     }
   }
-  public async [`Geturls${ChannelNameMap.KU}`](query: IGetUrlsServiceParams) {
-    return query;
+  public async [`Geturls${ChannelNameMap.KU}`]({ids}: IGetUrlsServiceParams) {
+    const {app} = this;
+    try {
+      const res = await Promise.allSettled(
+        ids.map(async (id) => {
+          return app.RequestKU({
+            url: `${Domains.KU}/url`,
+            data: {
+              response: 'url',
+              type: 'convert_url3',
+              rid: id,
+              br: '128kmp3'
+            }
+          });
+        })
+      );
+      const urlMap = {};
+      res.forEach((item, index) => {
+        const {value} = {value: {}, ...item};
+        const {
+          body: {url}
+        } = <{body: any}>value;
+        urlMap[ids[index]] = url;
+      });
+      return urlMap;
+    } catch (error) {
+      return Promise.reject(error);
+    }
   }
   public async [`Geturls${ChannelNameMap.SI}`](query: IGetUrlsServiceParams) {
     return query;

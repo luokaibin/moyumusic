@@ -1,4 +1,4 @@
-import { ISearchType, IChannelNameMap, IType, INETEASECONF } from '@types';
+import {ISearchType, IChannelNameMap, IType, INETEASECONF} from '@types';
 /**
  * 渠道
  * 1: QQ 2: 网易 3: 虾米 4: 咪咕 5: 酷我 6: 自建
@@ -67,6 +67,14 @@ export const SearchXIAType: ISearchType<IType> = {
   SINGER: 'SINGER',
   MV: 'MV'
 };
+export const SearchKUType: ISearchType<IType> = {
+  SONG: 'SONG',
+  SONGLIST: 'SONGLIST',
+  LYRIC: 'LYRIC',
+  ALBUM: 'ALBUM',
+  SINGER: 'SINGER',
+  MV: 'MV'
+};
 
 /**
  * 搜索类型
@@ -76,54 +84,54 @@ export const SearchType: ISearchType = {
   SONG: {
     QQ: SearchQQType.SONG,
     NETEASE: SearchNETEASEType.SONG,
-    XIA: SearchXIAType.SONG, // 还未修改
+    XIA: SearchXIAType.SONG,
     MI: SearchMIType.SONG,
-    KU: 1, // 还未修改
+    KU: SearchKUType.SONG,
     SI: 1 // 还未修改
   },
   /** 歌单 */
   SONGLIST: {
     QQ: SearchQQType.SONGLIST,
     NETEASE: SearchNETEASEType.SONGLIST,
-    XIA: SearchXIAType.LYRIC, // 还未修改
+    XIA: SearchXIAType.LYRIC,
     MI: SearchMIType.SONGLIST,
-    KU: 1, // 还未修改
+    KU: SearchKUType.SONGLIST,
     SI: 1 // 还未修改
   },
   /** 歌词 */
   LYRIC: {
     QQ: SearchQQType.LYRIC,
     NETEASE: SearchNETEASEType.LYRIC,
-    XIA: SearchXIAType.LYRIC, // 还未修改
+    XIA: SearchXIAType.LYRIC,
     MI: SearchMIType.LYRIC,
-    KU: 1, // 还未修改
+    KU: SearchKUType.LYRIC,
     SI: 1 // 还未修改
   },
   /** 专辑 */
   ALBUM: {
     QQ: SearchQQType.ALBUM,
     NETEASE: SearchNETEASEType.ALBUM,
-    XIA: SearchXIAType.ALBUM, // 还未修改
+    XIA: SearchXIAType.ALBUM,
     MI: SearchMIType.ALBUM,
-    KU: 1, // 还未修改
+    KU: SearchKUType.ALBUM,
     SI: 1 // 还未修改
   },
   /** 歌手 */
   SINGER: {
     QQ: SearchQQType.SINGER,
     NETEASE: SearchNETEASEType.SINGER,
-    XIA: SearchXIAType.SINGER, // 还未修改
+    XIA: SearchXIAType.SINGER,
     MI: SearchMIType.SINGER,
-    KU: 1, // 还未修改
+    KU: SearchKUType.SINGER,
     SI: 1 // 还未修改
   },
   /** MV */
   MV: {
     QQ: SearchQQType.MV,
     NETEASE: SearchNETEASEType.MV,
-    XIA: SearchXIAType.MV, // 还未修改
+    XIA: SearchXIAType.MV,
     MI: SearchMIType.MV,
-    KU: 1, // 还未修改
+    KU: SearchKUType.MV,
     SI: 1 // 还未修改
   }
 };
@@ -141,17 +149,33 @@ export const URLQQMAP = {
   [SearchQQType.MV]: 'http://c.y.qq.com/soso/fcgi-bin/client_search_cp'
 };
 
+export const Domains = {
+  XIA: 'https://www.xiami.com',
+  KU: 'http://www.kuwo.cn'
+};
+
 /**
  * 虾米音乐搜索接口
  * SONG：单曲，SONGLIST：歌单，ALBUM：专辑，SINGER：歌手，MV：mv
  */
-export const XIADomain = 'https://www.xiami.com';
 export const URLXIAMAP = {
-  [SearchXIAType.SONG]: `${XIADomain}/api/search/searchSongs`,
-  [SearchXIAType.SONGLIST]: `${XIADomain}/api/search/searchCollects`,
-  [SearchXIAType.ALBUM]: `${XIADomain}/api/search/searchAlbums`,
-  [SearchXIAType.SINGER]: `${XIADomain}/api/search/searchArtists`,
-  [SearchXIAType.MV]: `${XIADomain}/api/search/searchMvs`
+  [SearchXIAType.SONG]: `${Domains.XIA}/api/search/searchSongs`,
+  [SearchXIAType.SONGLIST]: `${Domains.XIA}/api/search/searchCollects`,
+  [SearchXIAType.ALBUM]: `${Domains.XIA}/api/search/searchAlbums`,
+  [SearchXIAType.SINGER]: `${Domains.XIA}/api/search/searchArtists`,
+  [SearchXIAType.MV]: `${Domains.XIA}/api/search/searchMvs`
+};
+
+/**
+ * 酷我音乐搜索接口
+ * SONG：单曲，SONGLIST：歌单，ALBUM：专辑，SINGER：歌手，MV：mv
+ */
+export const URLKUMAP = {
+  [SearchKUType.SONG]: `${Domains.KU}/api/www/search/searchMusicBykeyWord`,
+  [SearchKUType.SONGLIST]: `${Domains.KU}/api/www/search/searchPlayListBykeyWord`,
+  [SearchKUType.ALBUM]: `${Domains.KU}/api/www/search/searchAlbumBykeyWord`,
+  [SearchKUType.SINGER]: `${Domains.KU}/api/www/search/searchPlayListBykeyWord`,
+  [SearchKUType.MV]: `${Domains.KU}/api/www/search/searchMvBykeyWord`
 };
 /**
  * 拼接播放的URL
