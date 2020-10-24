@@ -1,5 +1,4 @@
-import { EggAppConfig, EggAppInfo, PowerPartial, Context } from 'egg';
-import * as CONSTANT from '../app/constants';
+import {EggAppConfig, EggAppInfo, PowerPartial, Context} from 'egg';
 
 export default (appInfo: EggAppInfo) => {
   const config = {} as PowerPartial<EggAppConfig>;
@@ -20,7 +19,6 @@ export default (appInfo: EggAppInfo) => {
   return {
     ...config,
     ...bizConfig,
-    CONSTANT,
     middleware: ['inspectBody'],
     security: {
       csrf: {

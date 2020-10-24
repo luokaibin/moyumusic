@@ -1,4 +1,4 @@
-import { Stats } from 'fs';
+import {Stats} from 'fs';
 
 export type ISearchQQSongT = 'SONG' | 'SONGLIST' | 'LYRIC' | 'ALBUM' | 'SINGER' | 'MV';
 export type IChannel = 'QQ' | 'NETEASE' | 'XIA' | 'MI' | 'KU' | 'SI';

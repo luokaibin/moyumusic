@@ -1,5 +1,5 @@
 import {Subscription} from 'egg';
-import {Domains} from '../constants';
+import {Domains} from '@const';
 
 export default class UpdateCookie extends Subscription {
   static get schedule() {

@@ -1,7 +1,7 @@
 // prettier.config.js or .prettierrc.js
 module.exports = {
   // 一行最多 85 字符
-  printWidth: 150,
+  printWidth: 120,
   // 使用 2 个空格缩进
   tabWidth: 2,
   // 不使用缩进符，而使用空格

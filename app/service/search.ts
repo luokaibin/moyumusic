@@ -1,6 +1,16 @@
 import {Service} from 'egg';
 import {ISearchServiceParams, SearchQQReq, SearchNETEASEReq, SearchMIReq} from '@types';
-import {URLQQMAP, ChannelNameMap, SearchQQType, SearchNETEASEType, SearchMIType, URLXIAMAP, SearchXIAType, URLKUMAP, SearchKUType} from '@const';
+import {
+  URLQQMAP,
+  ChannelNameMap,
+  SearchQQType,
+  SearchNETEASEType,
+  SearchMIType,
+  URLXIAMAP,
+  SearchXIAType,
+  URLKUMAP,
+  SearchKUType
+} from '@const';
 
 export default class Search extends Service {
   private CreateSearchQQReq({KeyWord, Limit, PageIndex, Type}: ISearchServiceParams): SearchQQReq {

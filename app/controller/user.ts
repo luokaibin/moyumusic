@@ -1,8 +1,8 @@
-import { Controller } from 'egg';
-import { FAIL, SUCCESS } from '@const';
+import {Controller} from 'egg';
+import {FAIL, SUCCESS} from '@const';
 
 export default class UserController extends Controller {
-  private async checkReq({ data }) {
+  private async checkReq({data}) {
     try {
       if (typeof data !== 'string') return Promise.reject(new Error('请传入data'));
       return Promise.resolve();
@@ -11,15 +11,15 @@ export default class UserController extends Controller {
     }
   }
   public async setCookie() {
-    const { ctx, app } = this;
+    const {ctx, app} = this;
     try {
       const userCookie = {};
       const {
         request: {
-          body: { data }
+          body: {data}
         }
       } = ctx;
-      await this.checkReq({ data });
+      await this.checkReq({data});
       data.split('; ').forEach((c) => {
         const arr = c.split('=');
         userCookie[arr[0]] = arr[1];

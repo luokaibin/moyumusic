@@ -1,5 +1,4 @@
-require('module-alias/register');
-import { mkdir } from 'fs';
+import {mkdir} from 'fs';
 
 export default class AppBootHook {
   app: any;
@@ -9,9 +8,9 @@ export default class AppBootHook {
   serverDidReady() {
     const creatDataPath = async () => {
       const {
-        app: { DATAPATH, helper }
+        app: {DATAPATH, helper}
       } = this;
-      const { status } = await helper.getStat(DATAPATH);
+      const {status} = await helper.getStat(DATAPATH);
       if (!status) {
         mkdir(DATAPATH, (err) => {
           if (!err) {

@@ -1,9 +1,19 @@
-import {Application} from 'egg';
-import {IRequestQQOptions, IGetStat, IMkdir, ICookie, IRequestNETEASEOptions, ICryptoApi, IRequestMIOptions, IAppRequestRes} from '@types';
-import {mkdir, readFile, stat, writeFile} from 'fs';
 import {resolve} from 'path';
-import {createCipheriv, createHash, publicEncrypt, randomBytes} from 'crypto';
+import {Application} from 'egg';
 import {RSA_NO_PADDING} from 'constants';
+import {NETEASECONF, Domains} from '@const';
+import {mkdir, readFile, stat, writeFile} from 'fs';
+import {createCipheriv, createHash, publicEncrypt, randomBytes} from 'crypto';
+import {
+  IRequestQQOptions,
+  IGetStat,
+  IMkdir,
+  ICookie,
+  IRequestNETEASEOptions,
+  ICryptoApi,
+  IRequestMIOptions,
+  IAppRequestRes
+} from '@types';
 
 export default {
   get DATAPATH() {
@@ -60,7 +70,9 @@ export default {
       const secretKey = randomBytes(16).map((n) => NETEASECONF.BASE62.charAt(n % 62).charCodeAt(0));
       return {
         params: this._aesEncrypt(
-          Buffer.from(this._aesEncrypt(Buffer.from(text), 'cbc', NETEASECONF.PRESETKEY, NETEASECONF.IV).toString('base64')),
+          Buffer.from(
+            this._aesEncrypt(Buffer.from(text), 'cbc', NETEASECONF.PRESETKEY, NETEASECONF.IV).toString('base64')
+          ),
           'cbc',
           secretKey,
           NETEASECONF.IV
@@ -296,13 +308,7 @@ export default {
   },
   async RequestNETEASE<T extends any>(options: IRequestNETEASEOptions<T>): Promise<IAppRequestRes<any, any>> {
     try {
-      const {
-        httpclient,
-        helper,
-        config: {
-          CONSTANT: {NETEASECONF}
-        }
-      } = this as Application;
+      const {httpclient, helper} = this as Application;
       const {url, data, crypto = 'Weapi', path} = options;
       const cryptoData = helper[`_crypto${crypto}`]({data, NETEASECONF, url, path});
       const {data: result, headers} = await httpclient.request(url, {
@@ -347,20 +353,10 @@ export default {
   },
   async RequestXIA(options: IRequestQQOptions<string>): Promise<IAppRequestRes<any, any>> {
     try {
-      const {
-        httpclient,
-        helper,
-        COOKIEFILE,
-        DATAPATH,
-        config: {
-          CONSTANT: {
-            Domains: {XIA: XIADomain}
-          }
-        }
-      } = this as Application;
+      const {httpclient, helper, COOKIEFILE, DATAPATH} = this as Application;
       const {XIA: cookie} = await helper.getCookie(COOKIEFILE, DATAPATH);
       const {url, data} = options;
-      const _s = helper.md5XIA(cookie?.xm_sg_tk ?? '', url.replace(XIADomain, ''), data);
+      const _s = helper.md5XIA(cookie?.xm_sg_tk ?? '', url.replace(Domains.XIA, ''), data);
       const {headers, data: res} = await httpclient.request(url, {
         method: 'GET',
         data: {
@@ -382,12 +378,7 @@ export default {
   },
   async RequestKU(options: IRequestQQOptions<any>): Promise<IAppRequestRes<any, any>> {
     try {
-      const {httpclient, helper, COOKIEFILE, DATAPATH, config} = this as Application;
-      const {
-        CONSTANT: {
-          Domains: {KU: KUDomain}
-        }
-      } = config;
+      const {httpclient, helper, COOKIEFILE, DATAPATH} = this as Application;
       const {KU: cookie} = await helper.getCookie(COOKIEFILE, DATAPATH);
       const {url, data} = options;
       const {headers, data: res} = await httpclient.request(url, {
@@ -398,7 +389,7 @@ export default {
         dataType: 'text',
         headers: {
           cookie: helper._formatCookie(cookie),
-          Referer: KUDomain,
+          Referer: Domains.KU,
           csrf: cookie?.kw_token
         }
       });

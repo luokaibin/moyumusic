@@ -11,7 +11,7 @@
     "experimentalDecorators": true, // 启用实验性的ES装饰器。
     "emitDecoratorMetadata": true, // 给源码里的装饰器声明加上设计类型元数据。
     "charset": "utf8",
-    "allowJs": true, // 允许编译javascript文件。
+    "allowJs": false, // 允许编译javascript文件。
     "pretty": true,
     "noEmitOnError": false,
     "noUnusedLocals": false, // 若有未使用的局部变量则抛错。
@@ -24,6 +24,8 @@
     "skipDefaultLibCheck": true, // 忽略 库的默认声明文件的类型检查。
     "inlineSourceMap": true, // 生成单个sourcemaps文件，而不是将每sourcemaps生成不同的文件。
     "importHelpers": true, // 从 tslib 导入辅助工具函数（比如 __extends， __rest等）
+    "removeComments": true, // 删除所有注释 除了以 /!*开头的版权信息。
+    "outDir": "dist",
     "baseUrl": ".",
     "paths": {
       "@types": ["./app/types/types.ts"],
@@ -33,6 +35,6 @@
   "exclude": [
     "app/public",
     "app/views",
-    "node_modules*"
+    "node_modules",
   ]
 }

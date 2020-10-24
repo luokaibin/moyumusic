@@ -1,12 +1,7 @@
-import { IRouterPaths } from '@types';
+import {IRouterPaths} from '@types';
 const USER = '/user';
 
 export const RouterPaths: IRouterPaths[] = [
-  {
-    path: '/',
-    method: 'get',
-    controller: `home.index`
-  },
   {
     path: '/search',
     method: 'get',

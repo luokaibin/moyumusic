@@ -1,4 +1,4 @@
-import { ChannelNameMap } from '../constants';
+import {ChannelNameMap} from '@const';
 
 export default {
   validate: {

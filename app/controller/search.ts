@@ -1,11 +1,11 @@
-import { Controller } from 'egg';
-import { ChannelNameMap, FAIL, SUCCESS, SearchType } from '@const';
-import { ISearchReq } from '@types';
+import {Controller} from 'egg';
+import {ISearchReq} from '@types';
+import {ChannelNameMap, FAIL, SUCCESS, SearchType} from '@const';
 
 export default class SearchController extends Controller {
-  private async checkReq({ Channel, KeyWord, Limit, PageIndex, Type }) {
+  private async checkReq({Channel, KeyWord, Limit, PageIndex, Type}) {
     try {
-      const { validate } = this.ctx.helper;
+      const {validate} = this.ctx.helper;
       await validate.checkChannel(Channel);
       if (typeof KeyWord !== 'string') return Promise.reject(new Error('请传入搜索内容'));
       await validate.checkInteger(Limit, 'Limit');
@@ -18,18 +18,18 @@ export default class SearchController extends Controller {
     }
   }
   public async index() {
-    const { ctx } = this;
+    const {ctx} = this;
     try {
-      const { query, service } = ctx;
-      const { Channel = ChannelNameMap.QQ, KeyWord, Limit = 20, PageIndex = 1, Type = 'SONG' } = <ISearchReq>query;
-      await this.checkReq({ Channel, KeyWord, Limit, PageIndex, Type });
+      const {query, service} = ctx;
+      const {Channel = ChannelNameMap.QQ, KeyWord, Limit = 20, PageIndex = 1, Type = 'SONG'} = <ISearchReq>query;
+      await this.checkReq({Channel, KeyWord, Limit, PageIndex, Type});
       const res = await service.search[`Search${ChannelNameMap[Channel]}`]({
         KeyWord,
         Limit,
         PageIndex,
         Type: SearchType[Type][Channel]
       });
-      ctx.body = { code: SUCCESS, data: res };
+      ctx.body = {code: SUCCESS, data: res};
     } catch (error) {
       ctx.logger.error(error);
       ctx.body = {
