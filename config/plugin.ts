@@ -1,4 +1,4 @@
-import 'tsconfig-paths/register';
+require('module-alias/register');
 import {EggPlugin} from 'egg';
 
 const plugin: EggPlugin = {
