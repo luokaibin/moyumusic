@@ -106,3 +106,5 @@ dist
 run/
 app/data
 test.data
+config/config.default.ts
+config/config.local.ts
