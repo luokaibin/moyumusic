@@ -1,5 +1,5 @@
 import {Controller} from 'egg';
-import {FAIL, SUCCESS, ChannelNameMap} from '@const';
+import {FAIL, SUCCESS, ChannelNameMap, ZhCNReg} from '@const';
 
 export default class GeturlsController extends Controller {
   private async checkReq({Channel, id}) {
@@ -24,7 +24,7 @@ export default class GeturlsController extends Controller {
       });
       ctx.body = {code: SUCCESS, data: res};
     } catch (error) {
-      ctx.logger.error(error);
+      !ZhCNReg.test(error.message) && ctx.logger.error(error);
       ctx.body = {
         code: FAIL,
         message: error?.message

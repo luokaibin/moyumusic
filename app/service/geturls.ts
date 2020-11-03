@@ -2,7 +2,7 @@ import {Service} from 'egg';
 import {IGetUrlsServiceParams} from '@types';
 import {ChannelNameMap, PlayDomain, numberReg, MIToneFlag, Domains} from '@const';
 
-export default class GetUrl extends Service {
+export default class GetUrlService extends Service {
   get URL(): {} {
     return {
       [ChannelNameMap.MI]: () => 'http://app.c.nf.migu.cn/MIGUM2.0/v2.0/content/listen-url',

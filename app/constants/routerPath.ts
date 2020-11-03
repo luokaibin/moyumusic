@@ -1,4 +1,5 @@
 import {IRouterPaths} from '@types';
+const CONFIG = '/config';
 const USER = '/user';
 
 export const RouterPaths: IRouterPaths[] = [
@@ -8,13 +9,43 @@ export const RouterPaths: IRouterPaths[] = [
     controller: `search.index`
   },
   {
-    path: `${USER}/setcookie`,
+    path: `${CONFIG}/setCookie`,
     method: 'post',
-    controller: `user.setCookie`
+    controller: `config.setCookie`
   },
   {
-    path: `/geturls`,
+    path: `/getUrls`,
     method: 'get',
     controller: `geturls.index`
+  },
+  {
+    path: `/sendCode`,
+    method: 'post',
+    controller: `sendCode.index`
+  },
+  {
+    path: `${USER}/login`,
+    method: 'post',
+    controller: `user.login`
+  },
+  {
+    path: `${USER}/loginCode`,
+    method: 'post',
+    controller: `user.loginCode`
+  },
+  {
+    path: `${USER}/updateUserinfo`,
+    method: 'post',
+    controller: `user.updateUserInfo`
+  },
+  {
+    path: `/getSonglist`,
+    method: 'get',
+    controller: `songlist.getSonglist`
+  },
+  {
+    path: `/createSonglist`,
+    method: 'post',
+    controller: `songlist.createSonglist`
   }
 ];

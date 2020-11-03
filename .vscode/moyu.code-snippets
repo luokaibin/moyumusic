@@ -1,0 +1,63 @@
+{
+	// Place your moyumusic 工作区 snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and 
+	// description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope 
+	// is left empty or omitted, the snippet gets applied to all languages. The prefix is what is 
+	// used to trigger the snippet and the body will be expanded and inserted. Possible variables are: 
+	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. 
+	// Placeholders with the same ids are connected.
+	// Example:
+	// "Print to console": {
+	// 	"scope": "javascript,typescript",
+	// 	"prefix": "log",
+	// 	"body": [
+	// 		"console.log('$1');",
+	// 		"$2"
+	// 	],
+	// 	"description": "Log output to console"
+	// }
+	"cc": {
+		"scope": "javascript,typescript",
+		"prefix": "cc",
+		"description": "项目 controller 内通用片段",
+		"body": [
+			"const {ctx} = this;",
+			"try {",
+			"  $1",
+			"  ctx.body = {code: SUCCESS, data: 'demo'};",
+			"} catch (error) {",
+			"  !ZhCNReg.test(error.message) && ctx.logger.error(error);",
+      "  ctx.body = {",
+      "    code: FAIL,",
+      "    message: error?.message",
+			"  };",
+			"}"
+		]
+	},
+	"sc": {
+		"scope": "javascript,typescript",
+		"prefix": "sc",
+		"description": "项目 service 内通用片段",
+		"body": [
+			"const {app} = this;",
+			"try {",
+			"  $1",
+			"  return 'success';",
+			"} catch (error) {",
+			"  return Promise.reject(error);",
+			"}"
+		]
+	},
+	"cs": {
+		"scope": "javascript,typescript",
+		"prefix": "cs",
+		"description": "创建 service",
+		"body": [
+			"import {Service} from 'egg';",
+			"",
+			"export default class $1Service extends Service {",
+			"  $2",
+			"}",
+			""
+		]
+	}
+}

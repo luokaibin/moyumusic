@@ -12,7 +12,7 @@ import {
   SearchKUType
 } from '@const';
 
-export default class Search extends Service {
+export default class SearchService extends Service {
   private CreateSearchQQReq({KeyWord, Limit, PageIndex, Type}: ISearchServiceParams): SearchQQReq {
     return Type === '2'
       ? {remoteplace: 'txt.yqq.playlist', page_no: PageIndex - 1, num_per_page: Limit, query: KeyWord}
@@ -35,6 +35,7 @@ export default class Search extends Service {
         return {
           total,
           list: list?.map((item) => ({
+            channel: ChannelNameMap.QQ,
             songmid: item.songmid,
             songname: item.songname,
             albumname: item.albumname,
@@ -67,6 +68,7 @@ export default class Search extends Service {
         return {
           total,
           list: list?.map((item) => ({
+            channel: ChannelNameMap.NETEASE,
             songmid: item.id,
             songname: item.name,
             albumname: item?.album?.name,
@@ -98,6 +100,7 @@ export default class Search extends Service {
           total,
           list: list?.map((item) => ({
             songmid: item.id,
+            channel: ChannelNameMap.MI,
             songname: item.songName,
             albumname: item.albumName,
             mp3: item.mp3,
@@ -137,6 +140,7 @@ export default class Search extends Service {
         return {
           total,
           list: list?.map((item) => ({
+            channel: ChannelNameMap.XIA,
             songmid: item.songId,
             songname: item.songName,
             albumname: item.albumName,
@@ -166,6 +170,7 @@ export default class Search extends Service {
         return {
           total,
           list: list?.map((item) => ({
+            channel: ChannelNameMap.KU,
             songmid: item.rid,
             songname: item.name,
             albumname: item.album,

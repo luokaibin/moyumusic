@@ -141,3 +141,43 @@ export interface ICryptoApi {
   path: string;
   data: any;
 }
+
+export interface ISendSmsMessage {
+  // 手机号码
+  mobile: string;
+  parameters: {
+    [key: string]: string | number;
+  };
+}
+
+export interface IVerifyCode {
+  phone: string;
+  code?: string;
+}
+
+export type IAccountType = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8';
+export interface IAccount {
+  type?: IAccountType;
+  account?: string;
+}
+export type IUserKey =
+  | 'id'
+  | 'view_id'
+  | 'phone'
+  | 'gender'
+  | 'nickname'
+  | 'cover_bg'
+  | 'portrait_image'
+  | 'autograph'
+  | 'birthday'
+  | 'region'
+  | 'realname'
+  | 'card_id'
+  | 'card_type';
+export type IUserInfo = {
+  [key in IUserKey]?: any;
+};
+
+export interface IregisterUser extends IUserInfo {
+  type: IAccountType;
+}

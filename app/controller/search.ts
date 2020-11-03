@@ -1,6 +1,6 @@
 import {Controller} from 'egg';
 import {ISearchReq} from '@types';
-import {ChannelNameMap, FAIL, SUCCESS, SearchType} from '@const';
+import {ChannelNameMap, FAIL, SUCCESS, SearchType, ZhCNReg} from '@const';
 
 export default class SearchController extends Controller {
   private async checkReq({Channel, KeyWord, Limit, PageIndex, Type}) {
@@ -31,7 +31,7 @@ export default class SearchController extends Controller {
       });
       ctx.body = {code: SUCCESS, data: res};
     } catch (error) {
-      ctx.logger.error(error);
+      !ZhCNReg.test(error.message) && ctx.logger.error(error);
       ctx.body = {
         code: FAIL,
         message: error?.message

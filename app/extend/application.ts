@@ -280,7 +280,18 @@ export default {
       } catch (error) {
         return {};
       }
+    },
+    /** hash 256 */
+    hash256(str: string): string {
+      const hash = createHash('sha256');
+      return hash.update(str).digest('hex');
     }
+    /**
+     * base64 加密
+     */
+    // base64(str:string):string {
+
+    // }
   },
 
   async RequestQQ<T = any>(options: IRequestQQOptions<T>): Promise<IAppRequestRes<any, any>> {

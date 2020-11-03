@@ -13,7 +13,7 @@ module.exports = {
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": 1,
     "no-unused-expressions": "off",
-    "@typescript-eslint/no-unused-expressions": 1,
+    "@typescript-eslint/no-unused-expressions": 0,
     "prefer-optional-chain": "off",
     "@typescript-eslint/prefer-optional-chain": 1,
     "no-extra-semi": "off",

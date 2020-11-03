@@ -193,11 +193,21 @@ export const NETEASECONF: Required<INETEASECONF> = {
     '-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDgtQn2JZ34ZC28NWYpAUd98iZ37BUrX/aKzmFbt7clFSs6sXqHauqKWqdtLkF2KexO40H1YTX8z2lSgBBOAxLsvaklV8k4cBFK9snQXE9/DDaFt6Rr7iVZMldczhC0JNgTz+SHXT6CBHuX3e9SdB1Ua44oncaTWz7OBGLbCiK45wIDAQAB\n-----END PUBLIC KEY-----'
 };
 
-export const numberReg = /^\d*$/;
-
 // 咪咕的音频质量
 export const MIToneFlag = {
   128: 'PQ',
   320: 'HQ',
   flac: 'SQ'
+};
+
+// 各种前缀后缀
+export const Prefixs = {
+  /** 验证码前缀 */
+  redis_code: 'moyu_'
+};
+
+// 各种过期时间
+export const ExpireTimes = {
+  /** 验证码过期时间 */
+  code: 1 * 60 * 30
 };
