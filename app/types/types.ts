@@ -178,6 +178,11 @@ export type IUserInfo = {
   [key in IUserKey]?: any;
 };
 
+export type ISonglistKey = 'id' | 'name' | 'userId' | 'public' | 'cover_bg' | 'desc';
+export type ISonglistInfo = {
+  [key in ISonglistKey]?: any;
+};
+
 export interface IregisterUser extends IUserInfo {
   type: IAccountType;
 }

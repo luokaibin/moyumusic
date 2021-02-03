@@ -20,7 +20,6 @@ export default class UserController extends Controller {
   }
   /** 修改用户信息校验 */
   public async checkUpdateUserInfoReq(userInfo: IUserInfo) {
-    const {ctx} = this;
     try {
       if (!userInfo.id && !userInfo.view_id) return Promise.reject(new Error('id 和 view_id 不能同时为空'));
       if (userInfo.id && typeof userInfo.id !== 'number') return Promise.reject(new Error('id 需要是 nember 类型'));

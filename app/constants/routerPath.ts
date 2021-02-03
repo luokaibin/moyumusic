@@ -1,6 +1,7 @@
 import {IRouterPaths} from '@types';
 const CONFIG = '/config';
 const USER = '/user';
+const SONGLIST = '/songlist';
 
 export const RouterPaths: IRouterPaths[] = [
   {
@@ -39,13 +40,18 @@ export const RouterPaths: IRouterPaths[] = [
     controller: `user.updateUserInfo`
   },
   {
-    path: `/getSonglist`,
+    path: `${SONGLIST}/getUserSonglist`,
     method: 'get',
-    controller: `songlist.getSonglist`
+    controller: `songlist.getUserSonglist`
   },
   {
-    path: `/createSonglist`,
+    path: `${SONGLIST}/createUserSonglist`,
     method: 'post',
-    controller: `songlist.createSonglist`
+    controller: `songlist.createUserSonglist`
+  },
+  {
+    path: `${SONGLIST}/updateUserSonglist`,
+    method: 'post',
+    controller: `songlist.updateUserSonglist`
   }
 ];
